@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+        <aop:config>
+            <!--<aop:pointcut id="pointcut" expression="execution(* com.service.MyService.aspectJ(..))"/>-->
+            <!--<aop:advisor advice-ref="aspectss" pointcut="execution(* *.*.*(..))"/>-->
+            <aop:aspect ref="aspect">
+                <aop:pointcut id="pointcut"  expression="execution(* *.*.*(..))"/>
+                <aop:around method="around" pointcut="execution(* com.service.MyService.aspectJ(..))" />
+            </aop:aspect>
+        </aop:config>
+    <bean class="com.service.MyService" id="service">
+        <property name="myDao" ref="dao"/>
+    </bean>
+    <bean class="com.dao.MyDao" id="dao">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+
+    <bean class="org.springframework.jdbc.core.JdbcTemplate" id="jdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <context:property-placeholder location="jdbc.properties"/>
+    <bean class="com.mchange.v2.c3p0.ComboPooledDataSource" id="dataSource">
+        <property name="driverClass" value="${driverClass}"/>
+        <property name="jdbcUrl" value="${jdbcUrl}"/>
+        <property name="user" value="${user}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+    <!--基于XML的ASPECT配置-->
+    <bean class="com.service.aspectj.MyAspect" id="aspect"/>
+    <bean class="com.service.aspectj.MyAspectss" id="aspectss"/>
+
+
+</beans>
